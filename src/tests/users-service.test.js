@@ -27,6 +27,7 @@ describe('createUser', () => {
   test('can insert new users with REST API', async () => {
     // insert new user in the database
     const newUser = await createUser(ripley);
+    //console.log(newUser._id);
 
     // verify inserted user's properties match parameter user
     expect(newUser.username).toEqual(ripley.username);
