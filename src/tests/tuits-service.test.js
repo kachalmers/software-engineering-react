@@ -22,7 +22,6 @@ describe('createTuit', () => {
     afterAll(() => {
         // Remove any data we created
         return deleteUsersByUsername(rigby.username);
-
     });
 
     test('can create tuit with REST API', async () => {
@@ -135,24 +134,25 @@ describe('findTuitById', () => {
 describe('findAllTuits', () => {
     // sample users we'll insert to then retrieve
     const usernames = [
-        "larry", "curley", "moe"
+        "huey", "dewie", "louie"
     ];
 
     // clean up after ourselves
-    afterAll(() =>
+    afterAll(() => {
         // delete the users we inserted
-        usernames.map(username =>
-            deleteUsersByUsername(username)
-        )
-    );
+        return Promise.all(usernames.map(username =>
+                                             deleteUsersByUsername(username)
+        ));
+    });
 
     test('can retrieve all tuits with REST API', async () => {
+
         // Create users who will post tuits
         const newUsers = await Promise.all(usernames.map(username =>
                           createUser({
                                          username: username,
                                          password: `${username}123`,
-                                         email: `${username}@stooges.com`
+                                         email: `${username}@ducktales.com`
                                      })
         ));
         // Have each new user post a tuit
@@ -161,25 +161,34 @@ describe('findAllTuits', () => {
                                      ))
         );
 
-        // retrieve all the tuits
+        // Retrieve all the tuits
         const tuits = await findAllTuits();
 
-        // there should be a minimum number of tuits
+        // There should be a minimum number of tuits
         expect(tuits.length).toBeGreaterThanOrEqual(newTuits.length);
 
         const newTuitsTuits = newTuits.map(tuit => tuit.tuit);
+        const newTuitsIds = newTuits.map(tuit => tuit._id);
 
-        // let's check each tuit we inserted
-        const tuitsWeInserted = tuits.filter(
-            tuit => newTuitsTuits.indexOf(tuit.tuit) >= 0);
+        // Filter all tuits to get array of tuits we added
+        const newTuitsFoundFromAll = tuits.filter(
+            tuit => newTuitsIds.indexOf(tuit._id) >= 0);
 
-        // compare the actual tuits in database with the ones we sent
-        tuitsWeInserted.forEach(tuit => {
-            const tuitText = newTuitsTuits.find(newTuit => newTuit === tuit.tuit);
-            expect(tuit.tuit).toEqual(tuitText);
+        // We expect to have inserted and retrieved all tuits we created
+        expect(newTuitsFoundFromAll.length).toEqual(newTuits.length);
+
+        // Compare the actual tuits in database with the ones we sent
+        newTuitsFoundFromAll.forEach(newTuitFoundFromAll => {
+            // Find matching tuit from ones we created
+            let tuitCreated = newTuits.find(newTuit => newTuit._id === newTuitFoundFromAll._id);
+
+            // Expect information of tuit found to match
+            expect(newTuitFoundFromAll._id).toEqual(tuitCreated._id);
+            expect(newTuitFoundFromAll.tuit).toEqual(tuitCreated.tuit);
+            expect(newTuitFoundFromAll.postedBy._id).toEqual(tuitCreated.postedBy);
         });
 
-        newTuits.map(tuit => deleteTuit(tuit._id));
+        await Promise.all(newTuits.map(tuit => deleteTuit(tuit._id)));
 
     });
 });
