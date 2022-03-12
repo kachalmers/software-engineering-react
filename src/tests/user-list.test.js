@@ -1,9 +1,12 @@
+/**
+ * @jest-environment jsdom
+ */
 import {UserList} from "../components/profile/user-list";
 import {screen, render} from "@testing-library/react";
 import {HashRouter} from "react-router-dom";
 import {findAllUsers} from "../services/users-service";
 import axios from "axios";
-//import '@testing-library/jest-dom'
+import '@testing-library/jest-dom'
 
 jest.mock('axios');
 
