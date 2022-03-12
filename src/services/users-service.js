@@ -11,6 +11,7 @@ export const createUser = (user) =>
     .then(response => response.data);
 
 export const findAllUsers = () =>
+    //console.log(axios.get(USERS_API));
     axios.get(USERS_API)
         .then(response => response.data);
 

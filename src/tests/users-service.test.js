@@ -136,7 +136,7 @@ describe('findAllUsers',  () => {
   test('can retrieve all users from REST API', async () => {
     // retrieve all the users
     const users = await findAllUsers();
-
+    console.log(users);
     // there should be a minimum number of users
     expect(users.length).toBeGreaterThanOrEqual(usernames.length);
 
