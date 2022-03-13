@@ -6,7 +6,7 @@ import {screen, render} from "@testing-library/react";
 import {HashRouter} from "react-router-dom";
 import {findAllUsers} from "../services/users-service";
 import axios from "axios";
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom';
 
 //jest.mock('axios');
 
@@ -26,7 +26,6 @@ test('user list renders static user array', () => {
 
 test('user list renders async', async () => {
   const users = await findAllUsers();
-  console.log(users);
   render(
     <HashRouter>
       <UserList users={users}/>
@@ -39,8 +38,8 @@ test('user list renders mocked', async () => {
   const mock = jest.spyOn(axios, 'get');
   mock.mockImplementation(() =>
     Promise.resolve({data: {users: MOCKED_USERS}}));
-  axios.get.mockImplementation(() =>
-    Promise.resolve({ data: {users: MOCKED_USERS} }));
+  //axios.get.mockImplementation(() =>
+  //  Promise.resolve({ data: {users: MOCKED_USERS} }));
   const response = await findAllUsers();
   const users = response.users;
 
