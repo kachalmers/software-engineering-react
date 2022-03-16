@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import {Tuit} from "../components/tuits";
 import {screen, render} from "@testing-library/react";
 import {HashRouter} from "react-router-dom";
 import {findAllTuits} from "../services/tuits-service";
@@ -82,6 +81,7 @@ test('tuit list renders mocked', async () => {
   const mock = jest.spyOn(axios, 'get');
   mock.mockImplementation(() =>
     Promise.resolve({data: {tuits: MOCKED_TUITS}}));
+
   const response = await findAllTuits();
   const tuits = response.tuits;
 
