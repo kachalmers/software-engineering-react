@@ -161,31 +161,34 @@ describe('findAllTuits', () => {
                                      ))
         );
 
-        // Retrieve all the tuits
-        const tuits = await findAllTuits();
-
-        // There should be a minimum number of tuits
-        expect(tuits.length).toBeGreaterThanOrEqual(newTuits.length);
-
-        const newTuitsTuits = newTuits.map(tuit => tuit.tuit);
+        // Store an array of new tuits' ids
         const newTuitsIds = newTuits.map(tuit => tuit._id);
 
-        // Filter all tuits to get array of tuits we added
-        const newTuitsFoundFromAll = tuits.filter(
+        // Retrieve all the tuits
+        const tuitsFromFindAllTuits = await findAllTuits();
+
+        // There should be a minimum number of tuits
+        expect(tuitsFromFindAllTuits.length).toBeGreaterThanOrEqual(newTuits.length);
+
+        // Filter tuitsFromFindAllTuits to get array of new tuits we added
+        const newTuitsFromFindAllTuits = tuitsFromFindAllTuits.filter(
             tuit => newTuitsIds.indexOf(tuit._id) >= 0);
 
         // We expect to have inserted and retrieved all tuits we created
-        expect(newTuitsFoundFromAll.length).toEqual(newTuits.length);
+        expect(newTuitsFromFindAllTuits.length).toEqual(newTuits.length);
 
         // Compare the actual tuits in database with the ones we sent
-        newTuitsFoundFromAll.forEach(newTuitFoundFromAll => {
-            // Find matching tuit from ones we created
-            let tuitCreated = newTuits.find(newTuit => newTuit._id === newTuitFoundFromAll._id);
+        newTuits.forEach(newTuit => {   // For each new tuit we created...
+            // Find matching tuit from newTuitFromFindAllTuits
+            let newTuitFromFindAllTuits = newTuitsFromFindAllTuits.find(
+                newTuitFromFindAllTuits =>
+                    newTuitFromFindAllTuits._id === newTuit._id);
 
-            // Expect information of tuit found to match
-            expect(newTuitFoundFromAll._id).toEqual(tuitCreated._id);
-            expect(newTuitFoundFromAll.tuit).toEqual(tuitCreated.tuit);
-            expect(newTuitFoundFromAll.postedBy._id).toEqual(tuitCreated.postedBy);
+            // Expect information of tuit retrieved with findAllTuits() to
+            // match that of newTuit
+            expect(newTuitFromFindAllTuits._id).toEqual(newTuit._id);
+            expect(newTuitFromFindAllTuits.tuit).toEqual(newTuit.tuit);
+            expect(newTuitFromFindAllTuits.postedBy._id).toEqual(newTuit.postedBy);
         });
 
         await Promise.all(newTuits.map(tuit => deleteTuit(tuit._id)));
